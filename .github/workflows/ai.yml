@@ -1,0 +1,31 @@
+name: ai
+
+on:
+  workflow_dispatch:
+
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    permissions:
+      models: read
+    steps:
+      - uses: actions/checkout@v4
+      - id: feature-defs
+        name: Fetch Features.def
+        run: |
+          curl -fsSL \
+            https://raw.githubusercontent.com/swiftlang/swift/refs/heads/main/include/swift/Basic/Features.def \
+            -o Features.def
+
+      - id: analysis
+        name: Run a one-line script
+        uses: actions/ai-inference@v2
+        with:
+          max-tokens: 8000
+          prompt-file: ./.github/prompts/ai.prompt.yml
+          file_input: |
+            feature-defs: Features.def
+
+      - name: Output result
+        run: |
+          echo "Analysis result: ${{ steps.analysis.outputs.response }}"

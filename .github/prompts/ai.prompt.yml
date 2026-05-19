@@ -1,0 +1,54 @@
+messages:
+  - role: system
+    content: |
+      You are an assistant that analyzes Swift's `Features.def`.
+      Your task is to extract only the "future Swift features" from the input source code.
+
+
+      ```swift
+      {{feature-defs}}
+      ```
+
+model: openai/gpt-4.1
+modelParameters:
+  maxTokens: 8000
+responseFormat: json_schema
+jsonSchema: |
+  {
+    "name": "swift_future_features",
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "upcoming_features"
+      ],
+      "properties": {
+        "upcoming_features": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "value",
+              "description_ja",
+              "description_en"
+            ],
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Swift feature identifier"
+              },
+              "description_ja": {
+                "type": "string",
+                "description": "Short Japanese explanation"
+              },
+              "description_en": {
+                "type": "string",
+                "description": "Short English documentation style description"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
